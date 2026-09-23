@@ -1,0 +1,47 @@
+# ── OS junk ──────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editors ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ── Node ─────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Build output ─────────────────────────────────────────
+dist/
+build/
+*.min.css
+*.min.js
+
+# ── Local backups / temp files ───────────────────────────
+*.bak
+*.tmp
+*.log
+backup/
+_notes/
+
+# ── Environment / secrets ────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── AI scratch ───────────────────────────────────────────
+CLAUDE.md
+.ai-notes/
