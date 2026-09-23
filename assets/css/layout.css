@@ -253,3 +253,67 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
   margin-top:22px;text-align:center;font-size:var(--fs-caption);
   color:var(--ink-400);line-height:1.6;
 }
+
+/* ============================================================
+   Compact mobile topbar  (≤640px)
+   ============================================================ */
+@media (max-width:640px){
+
+  #topbar{box-shadow:0 1px 6px rgba(6,22,48,.12)}
+
+  .topbar{
+    min-height:48px;            /* was 52–56px */
+    padding:6px 12px;           /* was 10–12px */
+    gap:10px;
+    flex-wrap:nowrap;           /* ← stops the 2nd row */
+    align-items:center;
+  }
+
+  /* ---- brand ---- */
+  .brand{gap:8px;flex:1 1 auto;min-width:0}
+  .brand__mark{width:30px;height:30px;border-radius:8px}
+  .brand__mark svg{width:17px;height:17px}
+  .brand__text{display:block;min-width:0}
+
+  .brand__name{
+    display:block;              /* ← FIX: force stacking */
+    font-size:13.5px;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .brand__sub{
+    display:none;               /* redundant with the name; reclaims a line */
+  }
+
+  /* ---- session pill ---- */
+  .session{padding:3px 4px 3px 3px;gap:6px;flex:none}
+  .session__avatar{width:28px;height:28px;font-size:12px}
+
+  .session__meta{
+    display:block;
+    line-height:1.1;
+    min-width:0;
+    max-width:92px;
+  }
+  .session__name{
+    display:block;              /* ← FIX: force stacking */
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .session__role{display:none}  /* role lives in the page greeting instead */
+
+  .session__out{width:28px;height:28px}
+  .session__out svg{width:14px;height:14px}
+
+  /* ---- reclaim page padding too ---- */
+  .app{padding:14px 14px calc(72px + env(safe-area-inset-bottom))}
+}
+
+/* very small phones — avatar only, no name */
+@media (max-width:360px){
+  .session__meta{display:none}
+}
