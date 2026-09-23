@@ -1,15 +1,18 @@
 /* ============================================================
-   layout.css — app shell, topbar, page, cards, auth split
+   layout.css — shell, topbar, page, cards, auth split
    ============================================================ */
 
-/* ---------- topbar ---------- */
 #topbar{
   position:sticky;top:0;z-index:60;
   background:var(--navy-900);
   color:#fff;
   border-bottom:1px solid rgba(255,255,255,.06);
   box-shadow:0 2px 12px rgba(6,22,48,.15);
+  transition:transform .22s var(--ease);
+  will-change:transform;
 }
+#topbar.is-hidden{transform:translateY(-100%)}
+
 .topbar{
   max-width:1180px;margin:0 auto;
   padding:12px 20px;
@@ -26,16 +29,18 @@
 .brand__mark svg{width:20px;height:20px}
 .brand__text{min-width:0}
 .brand__name{
+  display:block;
   font-size:15.5px;font-weight:700;letter-spacing:-.01em;
   line-height:1.15;color:#fff;
 }
 .brand__sub{
+  display:block;
   font-size:11px;color:rgba(255,255,255,.6);
   letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  margin-top:2px;
 }
 .topbar__spacer{flex:1 1 auto}
 
-/* session chip */
 .session{
   display:flex;align-items:center;gap:10px;
   background:rgba(255,255,255,.08);
@@ -48,11 +53,16 @@
   background:rgba(255,255,255,.95);color:var(--navy-900);
   display:grid;place-items:center;font-weight:700;font-size:13px;
 }
-.session__meta{line-height:1.2;padding-right:2px}
-.session__name{font-size:12.5px;font-weight:700;color:#fff}
+.session__meta{display:block;line-height:1.2;padding-right:2px;min-width:0}
+.session__name{
+  display:block;
+  font-size:12.5px;font-weight:700;color:#fff;
+}
 .session__role{
+  display:block;
   font-size:10.5px;font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;color:rgba(255,255,255,.6);
+  margin-top:1px;
 }
 .session__out{
   width:32px;height:32px;flex:none;border-radius:50%;
@@ -64,12 +74,77 @@
 .session__out:hover{background:rgba(255,255,255,.2)}
 .session__out svg{width:15px;height:15px}
 
-/* ---------- page ---------- */
 .app{max-width:1180px;margin:0 auto;padding:22px 20px 80px}
-@media (max-width:640px){
-  .app{padding:16px 14px 72px}
-  .topbar{padding:10px 14px;min-height:52px}
+
+/* ── sticky patient sub-header ─────────────────────────── */
+#subheader:empty{display:none}
+.subheader{
+  position:sticky;top:var(--topbar-h);z-index:55;
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  transition:top .22s var(--ease);
 }
+body.topbar-hidden .subheader{top:0}
+.subheader__inner{
+  max-width:1180px;margin:0 auto;
+  padding:8px 20px;
+  display:flex;align-items:center;gap:10px;
+  min-height:42px;
+}
+.subheader__dot{
+  width:8px;height:8px;border-radius:50%;flex:none;
+  background:var(--ink-300);
+}
+.subheader__dot.is-hrp{background:var(--rose-700);box-shadow:0 0 0 3px var(--rose-100)}
+.subheader__name{
+  font-size:13.5px;font-weight:700;color:var(--ink-900);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.subheader__id{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:700;
+  color:var(--ink-500);letter-spacing:.02em;flex:none;
+  background:var(--navy-50);border:1px solid var(--navy-100);
+  padding:2px 7px;border-radius:var(--r-xs);
+}
+.subheader__hrp{
+  margin-left:auto;flex:none;
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10.5px;font-weight:800;letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--rose-800);background:var(--rose-100);
+  padding:3px 8px;border-radius:var(--r-full);
+}
+.subheader__back{
+  width:34px;height:34px;flex:none;border-radius:50%;
+  display:grid;place-items:center;
+  color:var(--ink-700);background:var(--ink-100);
+  margin-left:-4px;
+}
+.subheader__back svg{width:16px;height:16px}
+.subheader__back:hover{background:var(--ink-200)}
+
+/* ── inline greeting (replaces session meta on mobile) ─── */
+.greeting{
+  display:flex;align-items:center;gap:11px;
+  margin:0 0 16px;
+}
+.greeting__avatar{
+  width:40px;height:40px;flex:none;border-radius:50%;
+  background:var(--navy-900);color:#fff;
+  display:grid;place-items:center;
+  font-weight:700;font-size:15px;letter-spacing:-.01em;
+}
+.greeting__meta{line-height:1.25;min-width:0}
+.greeting__hi{
+  font-size:16px;font-weight:700;color:var(--ink-900);
+  letter-spacing:-.01em;
+}
+.greeting__role{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-500);margin-top:3px;
+}
+.greeting__role .chip-id{font-size:10.5px;padding:2px 7px}
 
 .page-head{margin:2px 0 18px}
 .page-head h1{font-size:var(--fs-h1)}
@@ -85,7 +160,6 @@
   background:var(--ink-100);border-radius:var(--r-full);padding:4px 12px;
 }
 
-/* ---------- card ---------- */
 .card{
   background:var(--surface);
   border:1px solid var(--line);
@@ -109,7 +183,6 @@
 
 .divider{height:1px;background:var(--line);margin:14px 0}
 
-/* ---------- stat grid ---------- */
 .stats{
   display:grid;gap:12px;
   grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -143,18 +216,13 @@
   text-transform:uppercase;color:var(--ink-500);margin-top:6px;
   line-height:1.3;
 }
-html[lang="mr"] .stat__l,
-html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
 
-/* ---------- beneficiary card hover ---------- */
 .wcard{transition:all var(--dur) var(--ease)}
 .wcard:hover{
   border-color:var(--brand-700) !important;
   box-shadow:var(--sh-md) !important;
   transform:translateY(-1px);
 }
-
-/* ---------- role picker (login) ---------- */
 .pickrow{transition:all var(--dur) var(--ease)}
 .pickrow:hover{
   border-color:var(--brand-700) !important;
@@ -162,7 +230,62 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
   transform:translateY(-1px);
 }
 
-/* ---------- auth split ---------- */
+/* ── floating action button ────────────────────────────── */
+.fab{
+  position:fixed;
+  right:16px;
+  bottom:calc(72px + env(safe-area-inset-bottom,0px) + 12px);
+  width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--brand-700);color:#fff;
+  box-shadow:var(--sh-lg);
+  z-index:80;
+  transition:transform .16s var(--ease), filter .16s var(--ease);
+}
+.fab:hover{filter:brightness(1.08)}
+.fab:active{transform:scale(.94)}
+.fab svg{width:24px;height:24px}
+@media (min-width:641px){ .fab{right:24px} }
+
+/* ── bottom sheet ──────────────────────────────────────── */
+.sheet{
+  position:fixed;inset:0;z-index:150;
+  display:none;
+}
+.sheet.is-open{display:block}
+.sheet__backdrop{
+  position:absolute;inset:0;
+  background:rgba(6,22,48,.45);
+  animation:sheet-fade .18s var(--ease);
+}
+.sheet__panel{
+  position:absolute;left:0;right:0;bottom:0;
+  background:var(--surface);
+  border-radius:20px 20px 0 0;
+  box-shadow:0 -8px 32px rgba(15,23,42,.18);
+  padding:8px 18px calc(18px + env(safe-area-inset-bottom,0px));
+  max-height:82vh;overflow-y:auto;
+  animation:sheet-up .22s var(--ease);
+}
+.sheet__grab{
+  width:40px;height:4px;border-radius:2px;
+  background:var(--ink-300);
+  margin:8px auto 14px;
+}
+.sheet__title{
+  font-size:16px;font-weight:700;color:var(--ink-900);
+  margin-bottom:12px;padding-right:44px;
+}
+.sheet__close{
+  position:absolute;right:12px;top:14px;
+  width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--ink-100);color:var(--ink-600);
+}
+.sheet__close svg{width:15px;height:15px}
+@keyframes sheet-fade{from{opacity:0}to{opacity:1}}
+@keyframes sheet-up{from{transform:translateY(24px)}to{transform:translateY(0)}}
+
 .auth{
   min-height:100vh;
   display:grid;
@@ -214,9 +337,7 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
   letter-spacing:-.03em;margin-bottom:14px;
 }
 .auth__hero p{color:rgba(255,255,255,.78);font-size:15px;line-height:1.6}
-.auth__points{
-  margin-top:28px;display:flex;flex-direction:column;gap:12px;
-}
+.auth__points{margin-top:28px;display:flex;flex-direction:column;gap:12px}
 .auth__points li{
   display:flex;gap:11px;align-items:flex-start;
   font-size:14px;color:rgba(255,255,255,.88);line-height:1.5;
@@ -233,7 +354,6 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
   border-top:1px solid rgba(255,255,255,.1);padding-top:18px;
   line-height:1.6;
 }
-
 .auth__panel{
   display:flex;align-items:center;justify-content:center;
   padding:40px 24px;
@@ -255,39 +375,36 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
 }
 
 /* ============================================================
-   Compact mobile topbar  (≤640px)
+   MOBILE OVERRIDES  (≤640px)
    ============================================================ */
 @media (max-width:640px){
 
+  /* ── compact topbar — single row ──────────────────────── */
   #topbar{box-shadow:0 1px 6px rgba(6,22,48,.12)}
 
   .topbar{
-    min-height:48px;            /* was 52–56px */
-    padding:6px 12px;           /* was 10–12px */
+    min-height:48px;
+    padding:6px 12px;
     gap:10px;
-    flex-wrap:nowrap;           /* ← stops the 2nd row */
+    flex-wrap:nowrap;          /* ← stops the second row */
     align-items:center;
   }
 
-  /* ---- brand ---- */
   .brand{gap:8px;flex:1 1 auto;min-width:0}
   .brand__mark{width:30px;height:30px;border-radius:8px}
   .brand__mark svg{width:17px;height:17px}
   .brand__text{display:block;min-width:0}
 
   .brand__name{
-    display:block;              /* ← FIX: force stacking */
+    display:block;
     font-size:13.5px;
     line-height:1.15;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .brand__sub{
-    display:none;               /* redundant with the name; reclaims a line */
-  }
+  .brand__sub{display:none}    /* reclaims a line */
 
-  /* ---- session pill ---- */
   .session{padding:3px 4px 3px 3px;gap:6px;flex:none}
   .session__avatar{width:28px;height:28px;font-size:12px}
 
@@ -298,22 +415,42 @@ html[lang="hi"] .stat__l{letter-spacing:0;text-transform:none;font-size:12px}
     max-width:92px;
   }
   .session__name{
-    display:block;              /* ← FIX: force stacking */
+    display:block;
     font-size:12px;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .session__role{display:none}  /* role lives in the page greeting instead */
+  .session__role{display:none}  /* role moves to greeting block */
 
   .session__out{width:28px;height:28px}
   .session__out svg{width:14px;height:14px}
 
-  /* ---- reclaim page padding too ---- */
-  .app{padding:14px 14px calc(72px + env(safe-area-inset-bottom))}
+  .app{padding:14px 14px calc(72px + env(safe-area-inset-bottom,0px))}
+
+  .subheader__inner{padding:7px 14px;min-height:40px;gap:8px}
+  .subheader__name{font-size:13px}
+
+  .card{padding:14px}
+  .card + .card{margin-top:12px}
+  .card__head{margin-bottom:12px}
+  .card__title{font-size:16px}
+
+  .greeting{margin-bottom:14px}
+  .greeting__avatar{width:36px;height:36px;font-size:14px}
+  .greeting__hi{font-size:15px}
 }
 
-/* very small phones — avatar only, no name */
+/* 2-col stats on phones (otherwise 1-per-row feels wasteful) */
+@media (max-width:520px){
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .stat{padding:12px 13px}
+  .stat__n{font-size:24px}
+}
+
+/* very small phones — hide session name, keep avatar */
 @media (max-width:360px){
   .session__meta{display:none}
+  .session{padding:3px}
+  .brand__name{font-size:12.5px}
 }

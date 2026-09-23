@@ -607,3 +607,29 @@ html[lang="hi"] .woman-section-title{
   font-size:12px;color:var(--ink-500);margin-top:5px;
   line-height:1.45;font-style:italic;
 }
+
+
+
+/* ============================================================
+   MOBILE overrides for nav.css — appended
+   ============================================================ */
+@media (max-width:640px){
+  /* bottom nav sits flush, safe-area aware */
+  .appnav,
+  #appnav{
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  /* any inner language strip (if you kept one) shrinks */
+  .lang-bar,
+  .language-bar{
+    padding:6px 10px;
+    font-size:13px;
+  }
+
+  /* the strip should not remain sticky under the topbar — it costs 44px */
+  .lang-bar.is-sticky,
+  .language-bar.is-sticky{
+    position:static;
+  }
+}

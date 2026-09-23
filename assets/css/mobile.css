@@ -1,0 +1,98 @@
+/* ============================================================
+   mobile.css — loads LAST. Overlays all other CSS for ≤640px.
+   Safe to delete without breaking the app.
+   ============================================================ */
+
+/* ---- 1. Stats: force 2 columns on phones ---- */
+@media (max-width:520px){
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .stat{padding:12px 12px 12px 14px}
+  .stat__n{font-size:22px}
+  .stat__l{font-size:10.5px}
+}
+
+/* ---- 2. Tighter cards on mobile ---- */
+@media (max-width:640px){
+  .card{padding:14px;border-radius:var(--r-md)}
+  .card__head{margin-bottom:12px}
+  .card--flush .card__head{padding:14px 14px 0}
+  .table-wrap{margin:0 -14px -14px;padding:0 14px 14px}
+  .divider{margin:12px 0}
+}
+
+/* ---- 3. Sticky tab strip + auto-scroll active tab ---- */
+.tabs-wrap{
+  position:sticky;top:48px;z-index:40;
+  background:var(--bg);
+  padding:4px 0 8px;margin:-4px 0 0;
+}
+#topbar.is-hidden ~ .app .tabs-wrap{top:0}
+
+/* ---- 4. Patient sticky sub-header (injected by ui.mobile.js) ---- */
+.patient-sticky{
+  position:fixed;top:0;left:0;right:0;z-index:55;
+  background:var(--navy-900);color:#fff;
+  padding:8px 14px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 2px 8px rgba(6,22,48,.18);
+  transform:translateY(-100%);
+  transition:transform .22s var(--ease);
+}
+.patient-sticky.is-on{transform:translateY(0)}
+#topbar.is-hidden ~ .patient-sticky{top:0}
+.patient-sticky__name{
+  font-size:14px;font-weight:700;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.patient-sticky__id{
+  font-family:var(--font-mono);font-size:11px;
+  color:rgba(255,255,255,.65);letter-spacing:.04em;flex:none;
+}
+.patient-sticky__dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--rose-600);flex:none;
+}
+
+/* ---- 5. Greeting block (injected by ui.mobile.js) ---- */
+.greet{
+  display:flex;align-items:center;gap:10px;
+  margin:0 0 16px;padding:0 2px;
+}
+.greet__av{
+  width:38px;height:38px;border-radius:50%;flex:none;
+  background:var(--navy-900);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:14px;
+}
+.greet__t{line-height:1.25;min-width:0}
+.greet__name{font-size:15px;font-weight:700;color:var(--ink-900)}
+.greet__meta{
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-500);margin-top:2px;
+}
+html[lang="mr"] .greet__meta,
+html[lang="hi"] .greet__meta{
+  letter-spacing:0;text-transform:none;font-size:12px;
+}
+
+/* ---- 6. Skeleton loader (boot) ---- */
+.skel{
+  background:linear-gradient(90deg,
+    var(--ink-100) 0%, var(--ink-200) 50%, var(--ink-100) 100%);
+  background-size:200% 100%;
+  animation:skel 1.2s ease-in-out infinite;
+  border-radius:var(--r-sm);
+}
+@keyframes skel{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+.skel-card{height:88px;margin-bottom:12px}
+.skel-line{height:12px;margin-bottom:8px}
+.skel-line--sm{height:10px;width:60%}
+
+/* ---- 7. Respect reduced motion ---- */
+@media (prefers-reduced-motion:reduce){
+  .skel{animation:none;background:var(--ink-100)}
+  .patient-sticky{transition:none}
+  .tabs{scroll-behavior:auto}
+}

@@ -644,3 +644,154 @@
   MC.app = { render: render, state: state };
 
 })(window.MC = window.MC || {});
+
+/* ============================================================
+   MOBILE ENHANCEMENTS — appended
+   ============================================================ */
+
+/* ── 1. Auto-hide topbar on scroll-down, reveal on scroll-up ── */
+(function(){
+  var bar = document.getElementById('topbar');
+  if (!bar) return;
+  var last = 0, ticking = false;
+
+  function onScroll(){
+    var y = window.scrollY || window.pageYOffset || 0;
+    var hide = y > 90 && y > last;
+    if (bar.classList.contains('is-hidden') !== hide){
+      bar.classList.toggle('is-hidden', hide);
+      document.body.classList.toggle('topbar-hidden', hide);
+    }
+    last = y;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function(){
+    if (!ticking){ requestAnimationFrame(onScroll); ticking = true; }
+  }, {passive:true});
+})();
+
+/* ── 2. Numeric keyboards for numeric fields ───────────────── */
+(function(){
+  function apply(root){
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll(
+      'input[type=number],input[type=tel],input.input--code,.input--code'
+    ).forEach(function(el){
+      if (!el.getAttribute('inputmode')) el.setAttribute('inputmode','numeric');
+      if (!el.getAttribute('autocomplete')) el.setAttribute('autocomplete','off');
+    });
+  }
+  function boot(){
+    apply(document);
+    var target = document.getElementById('app') || document.body;
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if (n.nodeType === 1) apply(n);
+        });
+      });
+    }).observe(target, {childList:true, subtree:true});
+  }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+/* ── 3. Bottom-sheet API — call MC.sheet.open(html) ─────────
+   MC.sheet.open('<h3 class="sheet__title">Hi</h3><p>Body</p>')
+   MC.sheet.close()                                            */
+window.MC = window.MC || {};
+MC.sheet = (function(){
+  var host = null, lastFocus = null;
+  function getHost(){ return host || (host = document.getElementById('sheet')); }
+
+  function open(innerHtml){
+    var el = getHost(); if (!el) return;
+    lastFocus = document.activeElement;
+    el.innerHTML =
+      '<div class="sheet__backdrop" data-sheet-close></div>' +
+      '<div class="sheet__panel" role="dialog" aria-modal="true">' +
+        '<div class="sheet__grab"></div>' +
+        '<button class="sheet__close" type="button" aria-label="Close" data-sheet-close>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ' +
+               'stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+        innerHtml +
+      '</div>';
+    el.classList.add('is-open');
+    el.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close(){
+    var el = getHost(); if (!el) return;
+    el.classList.remove('is-open');
+    el.setAttribute('aria-hidden','true');
+    el.innerHTML = '';
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.addEventListener('click', function(e){
+    if (e.target.closest && e.target.closest('[data-sheet-close]')) close();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') close();
+  });
+
+  return { open: open, close: close };
+})();
+
+/* ── 4. Relative-time helper — use as MC.relTime(isoOrMs) ─── */
+MC.relTime = function(t){
+  if (!t) return '';
+  var ms = (typeof t === 'number') ? t : Date.parse(t);
+  if (isNaN(ms)) return '';
+  var d = Date.now() - ms;
+  if (d < 45e3)   return 'just now';
+  if (d < 90e3)   return '1 min ago';
+  if (d < 3600e3) return Math.round(d/60e3) + ' min ago';
+  if (d < 86400e3){
+    var h = Math.round(d/3600e3);
+    return h + (h === 1 ? ' hour ago' : ' hours ago');
+  }
+  var days = Math.round(d/86400e3);
+  if (days === 1) return 'yesterday';
+  if (days < 7)   return days + ' days ago';
+  return new Date(ms).toLocaleDateString();
+};
+
+/* ── 5. Render sticky sub-header on patient routes ──────────
+   Call MC.subheader.show(patient, { hrp:true|false, showBack:true })
+   from views.detail.js after mounting a patient.               */
+MC.subheader = (function(){
+  var host = null;
+  function getHost(){ return host || (host = document.getElementById('subheader')); }
+
+  function show(patient, opts){
+    opts = opts || {};
+    var el = getHost(); if (!el) return;
+    var initials = (patient.name || '?').trim().charAt(0).toUpperCase();
+    var hrp = !!opts.hrp;
+    el.innerHTML =
+      '<div class="subheader">' +
+        '<div class="subheader__inner">' +
+          (opts.showBack
+            ? '<button class="subheader__back" type="button" data-act="back" aria-label="Back">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" ' +
+                     'stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+              '</button>'
+            : '') +
+          '<span class="subheader__dot ' + (hrp ? 'is-hrp' : '') + '"></span>' +
+          '<span class="subheader__name">' + (patient.name || '') + '</span>' +
+          '<span class="subheader__id">' + (patient.patientId || '') + '</span>' +
+          (hrp ? '<span class="subheader__hrp">HRP</span>' : '') +
+        '</div>' +
+      '</div>';
+  }
+
+  function clear(){ var el = getHost(); if (el) el.innerHTML = ''; }
+
+  return { show: show, clear: clear };
+})();

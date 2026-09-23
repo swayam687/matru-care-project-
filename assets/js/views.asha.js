@@ -467,3 +467,74 @@
   MC.views.asha = { today: today, patients: patients, tasks: tasks, more: more };
 
 })(window.MC = window.MC || {});
+
+
+
+/* ============================================================
+   MOBILE ENHANCEMENTS — appended to views.asha.js
+   ============================================================ */
+
+/* ── Remove the language bar from inner pages ─────────────────
+   FIND: the line inside today() / patients() / tasks() that
+   renders the inline language strip (probably a call named
+   langBar(), languageBar(), langPill(), or an inline
+   `.lang-bar` / `.lang-pill` block).
+
+   DELETE that call/block from every page render EXCEPT more().
+
+   The language is still reachable from:
+     More → Settings → Language
+   so nothing is lost.                                    */
+
+
+/* ── Inline greeting block for Today page ─────────────────────
+   ADD at the very top of today()'s returned HTML:
+
+   <div class="greeting">
+     <div class="greeting__avatar">${MC.utils.initials(asha.name)}</div>
+     <div class="greeting__meta">
+       <div class="greeting__hi">${MC.i18n.t('greet.hello')}, ${MC.utils.esc(asha.name)}</div>
+       <div class="greeting__role">
+         <span>${MC.i18n.t('role.asha')}</span>
+         <span class="chip-id">${MC.utils.esc(asha.workerId)}</span>
+       </div>
+     </div>
+   </div>
+                                                            */
+
+/* ── Drop-in helper if MC.utils.initials doesn't exist ──── */
+(function(){
+  window.MC = window.MC || {};
+  MC.utils = MC.utils || {};
+  if (!MC.utils.initials){
+    MC.utils.initials = function(name){
+      if (!name) return '?';
+      var parts = String(name).trim().split(/\s+/);
+      var a = (parts[0] || '').charAt(0);
+      var b = (parts[1] || '').charAt(0);
+      return (a + b).toUpperCase() || '?';
+    };
+  }
+})();
+
+
+/* ── Convert "sync chip" into a tappable pull-to-sync ────────
+   FIND the render of the sync chip (class .sync-chip or the
+   element with ● Saved offline / ↻ Syncing… / ✓ Synced).
+
+   ADD attribute: data-act="force-sync"
+
+   Then this handler picks it up:                             */
+document.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('[data-act="force-sync"]');
+  if (!t) return;
+  if (window.MC && MC.sync && typeof MC.sync.run === 'function'){
+    MC.sync.run(true);
+  }
+});
+
+
+/* ── Relative-time on the sync chip ──────────────────────────
+   Where you currently render "✓ Synced", append:
+       <span class="u-rel"> · ${MC.relTime(lastSyncAt)}</span>
+   (MC.relTime is defined in app.js — already appended.)       */

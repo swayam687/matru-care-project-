@@ -15,6 +15,9 @@
     return MC.store.woman(s.id);
   }
 
+  /* Language bar — only rendered on the More page.
+     Removed from home()/visits()/care() so the strip does
+     not eat ~44px of vertical space on every visit.        */
   function langBar(){
     const opts = MC.i18n.options();
     const cur  = MC.i18n.lang;
@@ -40,7 +43,7 @@
     const daysLeft = S.daysToEdd(w.lmp);
 
     return '' +
-      langBar() +
+      /* langBar() intentionally removed from home */
 
       '<div class="woman-home">' +
 
@@ -213,7 +216,7 @@
     const bpStat = lastBP ? S.bpStatus(lastBP.sys, lastBP.dia) : null;
 
     return '' +
-      langBar() +
+      /* langBar() intentionally removed from care */
       '<div class="page-head"><h1>' +
         U.esc(t('woman.care.title')) + '</h1><p>' +
         U.esc(t('woman.care.sub')) + '</p></div>' +
@@ -309,7 +312,9 @@
           }).join('') + '</div>'
         : '') +
 
-      /* call ASHA */
+      /* call ASHA — direct dial. If MC.sheet exists we still dial
+         directly; a confirmation step before a phone call is
+         more annoying than helpful on a phone.                */
       (asha && asha.phone
         ? '<button class="btn btn--ghost btn--block woman-ask"' +
             ' style="margin-top:22px" data-act="call-asha"' +
@@ -327,6 +332,7 @@
     }) || {}).label || 'English';
 
     return '' +
+      /* langBar is kept here — it is the primary language switch point */
       langBar() +
       '<div class="page-head"><h1>' + U.esc(t('more.title')) + '</h1></div>' +
 
